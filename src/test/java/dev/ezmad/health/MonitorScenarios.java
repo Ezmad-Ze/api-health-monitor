@@ -139,16 +139,14 @@ final class MonitorScenarios {
     }
 
     private static void unreachable() throws Exception {
-        // Reserve a port without listening on it.
-        try (var channel = java.nio.channels.SocketChannel.open()) {
-            channel.bind(new InetSocketAddress("127.0.0.1", 0));
-            int port = ((InetSocketAddress) channel.getLocalAddress()).getPort();
-            var target = new Monitor.Target("closed", URI.create("http://127.0.0.1:" + port));
-            try (var monitor = new Monitor(List.of(target), Duration.ofSeconds(2), 2)) {
+        try (var fixture = new Fixture()) {
+            // Terminate the connection before HTTP headers, including any client retry.
+            fixture.server.createContext("/disconnect", exchange -> exchange.close());
+            try (var monitor = fixture.monitor("/disconnect", Duration.ofSeconds(2))) {
                 monitor.runChecks();
                 var result = latest(monitor);
                 expect(result.outcome() == Monitor.Outcome.UNREACHABLE && result.httpStatus() == null,
-                        "connection error");
+                        "expected a transport failure, got " + result.outcome());
             }
         }
     }
