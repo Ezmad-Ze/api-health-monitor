@@ -1,5 +1,5 @@
 # Validation
 
-November 23, 2026. The Java 21.0.13 core compiled on Linux and passed six local scenarios using real HTTP fixtures. They cover status classification, bounded history, omission of response data, invalid targets, redirects, header timeouts, stalled response bodies and connection failures.
+On November 23, 2026, the core compiled on Linux with Java 21.0.13 and passed six scenarios against real local HTTP fixtures. They cover status classification, bounded history, omission of response data, invalid targets, redirects, header timeouts, stalled response bodies and transport failures. The transport-failure fixture closes an accepted connection before sending response headers, including on any retry.
 
-The Spring Boot integration test exercises scheduled probes, the live JSON results endpoint and its Host-header check. The demo runs that test in isolation. The Maven toolchain and dependencies were unavailable in the local validation environment, so the Spring Boot build, integration test and demo await execution. Ubuntu and macOS CI jobs are configured and await publication.
+The Spring Boot integration test exercises scheduled probes, the live JSON results endpoint and its Host-header check. The isolated demo runs that test and prints the results. Maven and its dependencies were unavailable in the local validation environment. The [GitHub Actions workflow](../../actions/workflows/ci.yml) runs Maven verification and the demo with Java 21 on Ubuntu and macOS. Check the run for the commit you plan to use.
